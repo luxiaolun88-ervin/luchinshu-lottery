@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>盧琴樹 LUCHINSHU｜猜猜我是誰 公開抽獎</title>
+<style>
+:root{--wine:#5C2331;--gold:#C6A15B;--bg:#FBF6EE;--ink:#3a2a2e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.6}
+header{background:var(--wine);color:var(--bg);padding:22px 16px;text-align:center;position:relative;overflow:hidden}
+header h1{margin:0;font-size:1.5rem;letter-spacing:.08em}header .sub{color:var(--gold);font-size:.95rem}
+header .moon{position:absolute;right:18px;top:12px;width:46px;height:46px;border-radius:50%;box-shadow:-9px 4px 0 0 var(--gold)}
+.staff{height:22px;background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(198,161,91,.55) 3px 4px);opacity:.7}
+main{max-width:960px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:8px;margin:8px 0 14px}.tabs button{flex:1;padding:12px;border:2px solid var(--wine);background:#fff;color:var(--wine);border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
+.tabs button.on{background:var(--wine);color:var(--bg)}
+.card{background:#fff;border:1px solid #ead9c2;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(92,35,49,.06)}
+h2{color:var(--wine);font-size:1.1rem;margin:0 0 8px;border-left:5px solid var(--gold);padding-left:8px}
+textarea,input[type=text],input[type=number],select{width:100%;padding:10px;border:1px solid #d9c4a3;border-radius:8px;font:inherit;background:#fffdf9}
+textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace}
+.btn{background:var(--wine);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;margin:6px 6px 0 0}
+.btn.gold{background:var(--gold);color:var(--wine)}.btn.ghost{background:#fff;color:var(--wine);border:1px solid var(--wine)}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.stats div{background:var(--bg);border-radius:8px;padding:6px 12px}.stats b{color:var(--wine)}
+.mono{font-family:ui-monospace,Menlo,monospace;word-break:break-all;font-size:.85rem}
+.list{max-height:180px;overflow:auto;background:var(--bg);border-radius:8px;padding:8px;font-size:.85rem}
+.hint{font-size:.85rem;color:#7a6468}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:160px}
+.result{background:linear-gradient(180deg,#fff,#fbf3e6);border:3px solid var(--gold);border-radius:18px;padding:18px;text-align:center}
+.result h3{color:var(--wine);margin:0;font-size:1.3rem}.result .plat{display:inline-block;background:var(--wine);color:var(--gold);border-radius:20px;padding:2px 14px;margin:6px 0;font-weight:700}
+.result ol{text-align:left;max-width:520px;margin:12px auto;padding:0;list-style:none}
+.result li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px dashed #e2cfae}
+.result li .no{width:30px;height:30px;border-radius:50%;background:var(--wine);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.result li .acts button,.ranking button{font-size:.72rem;padding:2px 6px;margin:0 2px;border:1px solid var(--wine);background:#fff;color:var(--wine);border-radius:6px;cursor:pointer}
+.ranking .rk{display:flex;gap:8px;align-items:center;padding:3px 0;border-bottom:1px dotted #e2cfae}.ranking .out{text-decoration:line-through;color:#aa9294}.ranking .win{font-weight:700;color:var(--wine)}
+.result li .nm{font-weight:700;font-size:1.05rem;flex:1}.result li .sc{font-size:.7rem;color:#8a7376}
+.shuffle{font-size:1.4rem;color:var(--wine);font-weight:700;min-height:2em}
+pre{background:#2b1a1f;color:#f3e6cf;padding:12px;border-radius:8px;overflow:auto;font-size:.8rem}
+footer{text-align:center;color:#8a7376;font-size:.8rem;padding:20px}
+.hidden{display:none}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;border-radius:6px;padding:1px 7px;flex:none}.badge.FB{background:#1877F2;color:#fff}.badge.IG{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);color:#fff}
+.note{background:#fff6df;border:1px solid var(--gold);border-radius:8px;padding:8px 12px;font-size:.9rem;margin:8px 0}
+</style></head><body>
+<header><div class="moon"></div><h1>盧琴樹 LUCHINSHU</h1><div class="sub">「猜猜我是誰」草莓夏威夷果牛軋糖 ｜ 公平、不黑箱 公開抽獎</div></header>
+<div class="staff"></div>
+<main>
+<div class="tabs"><button data-p="FB" class="on">FB 粉專</button><button data-p="IG">Instagram</button><button data-p="ALL">FB＋IG 合併抽</button></div>
+<div id="panels"></div>
+
+<div class="card"><h2>演算法說明（任何人都能重算）</h2>
+<ol>
+<li>名單整理：每行一個帳號，去除前後空白與開頭的「@」，做 Unicode NFC 正規化並轉小寫作為比對鍵；相同比對鍵只保留一筆（顯示第一次出現的原始寫法）。</li>
+<li>標準名單（canonical list）：比對鍵依 Unicode 碼位排序，以「\n」串接、UTF-8 編碼，計算 SHA-256 → <b>名單雜湊</b>。抽獎前先公布此雜湊，之後名單無法偷改。</li>
+<li>種子（seed）：抽獎前預告、當時尚未產生的公開數字，例如某期台灣彩券開獎號碼或某個未來比特幣區塊雜湊。</li>
+<li>每位參加者分數 = SHA-256( seed + "|" + 平台 + "|" + 比對鍵 )，平台為 <code>FB</code> 或 <code>IG</code>；合併抽時平台為 <code>ALL</code>（同平台內去重，跨平台同名各算一筆；抽獎前人工確認為同一人者合併為單一項目「<code>FB:x+IG:y</code>」），比對鍵改為加上平台前綴的「<code>FB:帳號</code>」或「<code>IG:帳號</code>」。</li>
+<li>依分數十六進位字串由小到大排序，取前 N 名為得獎者（同分機率可忽略，若同分以比對鍵排序）。</li>
+<li>遞補：得獎者若為同一人重複參加或放棄，依同一排序的下一順位遞補；頁面公開前 N+10 名完整排名，紀錄檔保存所有遞補原因。</li>
+</ol></div>
+
+<div class="card"><h2>驗證模式</h2>
+<p>下載的 JSON 紀錄內含完整標準名單、種子與得獎分數。任何人可：①確認名單雜湊與抽獎前公布的一致；②用下方 Python 程式（只需標準函式庫）重算，結果必須完全相同。</p>
+<p class="mono">python3 verify.py list.txt "種子" FB 5</p>
+<p><b>合併抽（FB＋IG）驗證：</b>JSON／文字紀錄中的標準名單每行為「FB:帳號」或「IG:帳號」，已依 Unicode 碼位排序；名單雜湊 = SHA-256(以「\n」串接的前綴名單)；分數 = SHA-256(seed + "|ALL|" + 前綴項目)。同一帳號名稱在 FB 與 IG 各自計為一筆（只在同平台內去重）。可用以下任一方式重算：</p>
+<p class="mono">python3 verify.py combined.txt "種子" ALL 10　（combined.txt 每行 FB:帳號 / IG:帳號；人工合併者為 FB:x+IG:y）<br>python3 verify.py fb.txt "種子" ALL 10 ig.txt　（兩份原始名單，程式自動加前綴；此方式不含人工合併）</p>
+<pre id="pysnip"></pre>
+<div class="row"><div><input type="text" id="vHash" placeholder="貼上公布的名單雜湊，與目前分頁比對"></div><div style="flex:0"><button class="btn ghost" id="vBtn">比對</button></div></div>
+<div id="vOut" class="hint"></div>
+</div>
+</main>
+<footer>盧琴樹 LUCHINSHU｜鷹速國際有限公司｜本頁完全在瀏覽器本機運算，不上傳任何資料</footer>
+
+<template id="tpl"><div class="panel">
+<div class="card"><h2>① 匯入名單 <span class="pname"></span></h2>
+<textarea class="paste" placeholder="每行一個帳號，例如：&#10;@strawberry_love&#10;moon_cookie"></textarea>
+<div class="row" style="margin-top:8px"><div><input type="file" class="csv" accept=".csv,.txt,text/csv,text/plain"><div class="hint">CSV：自動處理 BOM、引號、標題列</div></div>
+<div><select class="col"><option value="0">使用第 1 欄</option></select></div>
+<div><label class="hint"><input type="checkbox" class="hdr"> 第一列為標題列（略過）</label></div></div>
+<button class="btn clean">整理名單</button><button class="btn ghost sample">載入範例資料</button>
+<div class="stats"><div>原始筆數 <b class="sRaw">0</b></div><div>重複移除 <b class="sDup">0</b></div><div>空白略過 <b class="sEmp">0</b></div><div>有效名單 <b class="sVal">0</b></div></div>
+<div class="list cleaned hint">尚未整理</div></div>
+<div class="card"><h2>② 承諾：名單雜湊（抽獎前公布）</h2>
+<div class="mono hash">—</div><button class="btn gold copyHash">複製雜湊</button></div>
+<div class="card"><h2>③ 公開種子與抽獎</h2>
+<input type="text" class="seed" placeholder="例如：115000123 威力彩 01 05 12 23 30 37 / 08">
+<div class="hint">請在抽獎前預告種子來源（例如「X 月 X 日開獎的某期大樂透號碼」或「比特幣第 N 號區塊雜湊」），開獎後填入原文即可。種子一字不差才能重現結果。</div>
+<div class="row" style="margin-top:8px"><div><label class="hint">得獎人數</label><input type="number" class="n" value="5" min="1"></div>
+<div><label class="hint"><input type="checkbox" class="mask"> 遮罩得獎帳號（公開截圖用）</label></div></div>
+<button class="btn draw">開始抽獎</button></div>
+<div class="card resultWrap hidden"><div class="result">
+<h3>「猜猜我是誰」草莓夏威夷果牛軋糖 得獎名單</h3><div class="plat"></div>
+<div class="shuffle"></div><ol class="winners"></ol>
+<div class="hint meta"></div></div>
+<div class="repl hint"></div>
+<h2 style="margin-top:12px">完整排名（公開遞補順序）</h2><div class="hint">如得獎者為重複參加的同一人或放棄領獎，按該列按鈕，由下一順位依同一分數排序自動遞補。</div><div class="list ranking" style="max-height:340px"></div>
+<button class="btn dlJson">下載 JSON 紀錄</button><button class="btn ghost dlCsv">下載 CSV 紀錄</button><button class="btn ghost dlTxt">下載文字紀錄</button></div>
+</div></template>
+
+<script id="lottery-core">
+// ===== 核心演算法（可被 node 測試擷取）=====
+function normKey(s){return String(s).normalize('NFC').trim().replace(/^[@＠]+/,'').trim().toLowerCase();}
+function cpCmp(a,b){const A=Array.from(a),B=Array.from(b);for(let i=0;i<Math.min(A.length,B.length);i++){const d=A[i].codePointAt(0)-B[i].codePointAt(0);if(d)return d;}return A.length-B.length;}
+function cleanList(lines){const seen=new Map();let raw=0,empty=0,dup=0;
+ for(const l of lines){const disp=String(l).normalize('NFC').trim().replace(/^[@＠]+/,'').trim();if(!disp){empty++;continue;}raw++;const k=disp.toLowerCase();if(seen.has(k)){dup++;continue;}seen.set(k,disp);}
+ const keys=[...seen.keys()].sort(cpCmp);return{raw,empty,dup,keys,display:Object.fromEntries(seen)};}
+function hex(buf){return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+async function sha256Hex(str){return hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)));}
+async function listHash(keys){return sha256Hex(keys.join('\n'));}
+async function drawWinners(keys,seed,platform,n){const scored=[];for(const k of keys)scored.push({key:k,score:await sha256Hex(seed+'|'+platform+'|'+k)});
+ scored.sort((a,b)=>a.score<b.score?-1:a.score>b.score?1:cpCmp(a.key,b.key));return scored.slice(0,n).map((x,i)=>({rank:i+1,...x}));}
+function parseCSV(text){text=text.replace(/^\uFEFF/,'');const rows=[];let row=[],f='',q=false;
+ for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c=='"'){if(text[i+1]=='"'){f+='"';i++;}else q=false;}else f+=c;}
+  else if(c=='"')q=true;else if(c==','){row.push(f);f='';}else if(c=='\n'||c=='\r'){if(c=='\r'&&text[i+1]=='\n')i++;row.push(f);rows.push(row);row=[];f='';}else f+=c;}
+ if(f!==''||row.length){row.push(f);rows.push(row);}return rows.filter(r=>r.some(x=>x.trim()!==''));}
+function maskName(s){const a=Array.from(s);if(a.length<=1)return '*';if(a.length==2)return a[0]+'*';return a[0]+'*'.repeat(Math.min(a.length-2,6))+a[a.length-1];}
+// 合併抽：各平台內各自去重，再加上「FB:」「IG:」前綴；同名帳號跨平台各算一筆
+// merges：[[fbKey,igKey],...] 經人工確認為同一人 → 合為單一項目「FB:x+IG:y」（每個帳號最多合併一次）
+function combineLists(fbKeys,igKeys,merges=[]){const F=new Set(fbKeys),I=new Set(igKeys),used=new Set(),e=[];
+ for(const[f,i]of merges){if(!F.has(f)||!I.has(i)||used.has('FB:'+f)||used.has('IG:'+i))continue;used.add('FB:'+f);used.add('IG:'+i);e.push('FB:'+f+'+IG:'+i);}
+ for(const k of F)if(!used.has('FB:'+k))e.push('FB:'+k);for(const k of I)if(!used.has('IG:'+k))e.push('IG:'+k);return e.sort(cpCmp);}
+function splitEntry(e){return e.split(/\+(?=(?:FB|IG):)/).map(x=>({platform:x.slice(0,2),key:x.slice(3)}));}
+// 疑似同一人：去除空白、底線、點、連字號、數字後比較；含中日韓文字者須完全相同，其餘相同或 Levenshtein 相似度 ≥ 0.8
+function stripName(k){return k.replace(/[\s_.\-\d０-９]/g,'');}
+function lev(a,b){a=Array.from(a);b=Array.from(b);let p=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const c=[i];for(let j=1;j<=b.length;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[b.length];}
+function simRatio(a,b){const m=Math.max(Array.from(a).length,Array.from(b).length);return m?1-lev(a,b)/m:1;}
+const CJK=/[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af]/;
+function findSimilarPairs(fbKeys,igKeys){const out=[];for(const f of fbKeys){const sf=stripName(f);if(!sf)continue;for(const i of igKeys){const si=stripName(i);if(!si)continue;
+ let r;if(CJK.test(sf)||CJK.test(si))r=sf===si?1:0;else r=sf===si?1:simRatio(sf,si);if(r>=0.8)out.push({fb:f,ig:i,ratio:Math.round(r*100)/100,exact:f===i});}}
+ return out.sort((a,b)=>b.ratio-a.ratio||cpCmp(a.fb,b.fb)||cpCmp(a.ig,b.ig));}
+// 遞補：ranking 為完整分數排序；removals 依序 [{key,reason}]；回傳最終得獎者與遞補紀錄（不改變抽獎數學）
+function applyReplacements(ranking,n,removals=[]){const gone=new Set(),log=[];const top=()=>ranking.filter(r=>!gone.has(r.key)).slice(0,n);let cur=top();
+ for(const rm of removals){if(gone.has(rm.key)||!cur.some(w=>w.key===rm.key))continue;const was=ranking.find(r=>r.key===rm.key);gone.add(rm.key);const nx=top();const inn=nx.find(w=>!cur.some(c=>c.key===w.key));
+  log.push({removed_key:rm.key,removed_rank:was.rank,reason:rm.reason,replaced_by_key:inn?inn.key:null,replaced_by_rank:inn?inn.rank:null});cur=nx;}
+ return{winners:cur,replacements:log};}
+if(typeof module!=='undefined')module.exports={normKey,cleanList,listHash,drawWinners,parseCSV,maskName,sha256Hex,combineLists,splitEntry,cpCmp,stripName,lev,simRatio,findSimilarPairs,applyReplacements};
+</script>
+<script>
+const ALGO='score = SHA-256(seed + "|" + platform + "|" + key)；key = NFC、去空白、去開頭@、小寫；標準名單 = key 依 Unicode 碼位排序、\\n 串接、UTF-8；名單雜湊 = SHA-256(標準名單)；依 score 十六進位升冪取前 N 名。';
+const PY=`#!/usr/bin/env python3
+# 盧琴樹 公開抽獎驗證程式：
+#   單一平台：python3 verify.py list.txt "seed" FB 5
+#   合併抽：  python3 verify.py combined.txt "seed" ALL 10        (每行 FB:帳號 / IG:帳號)
+#             python3 verify.py fb.txt "seed" ALL 10 ig.txt       (兩份原始名單)
+import sys, re, hashlib, unicodedata
+def key(s):
+    s = unicodedata.normalize("NFC", s).strip().lstrip("@＠").strip()
+    return s.lower()
+def read(p):
+    return open(p, encoding="utf-8-sig").read().splitlines()
+def keyset(lines):
+    return {key(l) for l in lines if key(l)}
+path, seed, platform, n = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4])
+if platform == "ALL":
+    if len(sys.argv) > 5:  # 兩份檔案：FB 名單、IG 名單
+        entries = {"FB:" + k for k in keyset(read(path))} | {"IG:" + k for k in keyset(read(sys.argv[5]))}
+    else:  # 一份已加前綴的檔案
+        entries = set()
+        for l in read(path):
+            l = unicodedata.normalize("NFC", l).strip()
+            if not l: continue
+            parts = []
+            for part in re.split(r"\\+(?=(?:FB|IG|fb|ig):)", l):  # FB:x 或人工合併的 FB:x+IG:y
+                p, sep, rest = part.partition(":")
+                if not sep or p.upper() not in ("FB", "IG"): sys.exit("格式錯誤（需 FB: 或 IG: 前綴）：" + l)
+                if key(rest): parts.append(p.upper() + ":" + key(rest))
+            if parts: entries.add("+".join(parts))
+    keys = sorted(entries)
+else:
+    keys = sorted(keyset(read(path)))
+print("list_hash", hashlib.sha256("\\n".join(keys).encode()).hexdigest())
+h = lambda k: hashlib.sha256(f"{seed}|{platform}|{k}".encode()).hexdigest()
+for i, (s, k) in enumerate(sorted((h(k), k) for k in keys)[:n], 1):
+    print(i, k, s)`;
+document.getElementById('pysnip').textContent=PY;
+const SAMPLE={FB:'王小明\n@Strawberry_Love\nstrawberry_love\n 月下弦音迷 \n陳美麗\n林大華\n@moon_cookie\n張阿姨愛吃糖\n黃小琪\n牛軋糖控\n@Nougat_Fan\nluchinshu_fan\n吳先生\n王小明\n',IG:'@straw.berry.tw\n@moonstring_lover\n@candy_girl\n@Candy_Girl\n@taoyuan_foodie\n@nougat.daily\n@sweet_tooth88\n@lu_fan_01\n@cookie.monster.tw\n@hawaii_nut\n@pink.mood\n@jiayi_eats\n'};
+const SAMPLE_ALL={FB:SAMPLE.FB,IG:SAMPLE.IG+'@strawberry.love\n@moon_cookie88\n王小明\n'};
+const SEED_SAMPLE='2026-10-30 大樂透 第115000123期 03 11 19 27 34 42 特別號 08';
+const tw=()=>new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())+' (台北時間 UTC+8)';
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+text],{type}));a.download=name;a.click();}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+const PNAME={FB:'FB 粉專',IG:'Instagram',ALL:'FB＋IG 合併抽'};
+const state={};
+function readLines(S,$,ta){let lines;if(S.csvRows&&!ta.value.trim()){const c=+$('.col').value;lines=S.csvRows.slice($('.hdr').checked?1:0).map(r=>r[c]||'');}
+ else{lines=ta.value.split(/\r?\n/);if($('.hdr').checked)lines=lines.slice(1);}return lines;}
+for(const P of ['FB','IG','ALL']){
+ const el=document.getElementById('tpl').content.firstElementChild.cloneNode(true);el.dataset.p=P;if(P!='FB')el.classList.add('hidden');
+ document.getElementById('panels').appendChild(el);const $=s=>el.querySelector(s);$('.pname').textContent='（'+PNAME[P]+'）';
+ const S=state[P]={el,csvRows:null,removals:[]};
+ if(P=='ALL'){ // 合併抽：改寫第①卡
+  $('.n').value=10;
+  const c1=el.querySelector('.card');c1.innerHTML=`<h2>① 合併名單（FB＋IG）</h2>
+<div class="note">⚠️ 重要說明：合併抽只在<b>同一平台內</b>去除重複。同一個帳號名稱若同時出現在 FB 與 IG，會被視為<b>兩筆不同的參加資格</b>（例如「FB:王小明」與「IG:王小明」各算一次），因為兩個平台的帳號不一定是同一人。若經確認是同一人，請在下方「疑似同一人」清單勾選合併，或於開獎後使用「同一人，取消」遞補。</div>
+<div class="row"><div><label class="hint">FB 名單</label><textarea class="pfb" placeholder="每行一個 FB 帳號"></textarea></div><div><label class="hint">IG 名單</label><textarea class="pig" placeholder="每行一個 IG 帳號"></textarea></div></div>
+<button class="btn ghost pull">從 FB／IG 分頁帶入</button><button class="btn clean">建立合併名單</button><button class="btn ghost sample">載入範例資料</button>
+<div class="stats"><div>FB 有效 <b class="sF">0</b></div><div>IG 有效 <b class="sI">0</b></div><div>同平台重複移除 <b class="sDup">0</b></div><div>人工合併 <b class="sM">0</b></div><div>合併名單筆數 <b class="sVal">0</b></div></div>
+<div class="list cleaned hint">尚未建立</div>`;
+  const sim=document.createElement('div');sim.className='card';sim.innerHTML=`<h2>疑似同一人提示（抽獎前人工確認）</h2><div class="hint">規則：去除空白、底線、點、連字號、數字後比較；中文等 CJK 名稱需完全相同，英文名稱相同或相似度 ≥ 80% 即列出。預設不合併；勾選「合併」則視為同一人，在標準名單中成為單一項目「FB:x+IG:y」，名單雜湊會隨之改變，請在決定後再公布雜湊。</div><div class="simList list" style="max-height:260px">尚未建立</div>`;
+  c1.after(sim);
+ }
+ if(P!='ALL')$('.csv').onchange=async e=>{const f=e.target.files[0];if(!f)return;S.csvRows=parseCSV(await f.text());const cols=Math.max(...S.csvRows.map(r=>r.length));
+  $('.col').innerHTML=Array.from({length:cols},(_,i)=>`<option value="${i}">第 ${i+1} 欄${S.csvRows[0]?'：'+(S.csvRows[0][i]||'').slice(0,20):''}</option>`).join('');$('.paste').value='';};
+ // 顯示名稱
+ const nameOf=(k,mask)=>{const f=x=>mask?maskName(x):x;
+  if(P!='ALL')return esc(f(S.clean.display[k]));
+  return splitEntry(k).map(e=>`<span class="badge ${e.platform}">${e.platform}</span> ${esc(f((e.platform=='FB'?S.fb:S.ig).display[e.key]??e.key))}`).join(' ＋ ');};
+ const plainName=k=>P!='ALL'?S.clean.display[k]:splitEntry(k).map(e=>e.platform+':'+((e.platform=='FB'?S.fb:S.ig).display[e.key]??e.key)).join('+');
+ async function rebuild(){ // ALL：依合併勾選重建
+  const merges=[...el.querySelectorAll('.simList input:checked')].map(c=>[c.dataset.fb,c.dataset.ig]);
+  const keys=combineLists(S.fb.keys,S.ig.keys,merges);S.merges=merges.filter(([f,i])=>keys.includes('FB:'+f+'+IG:'+i));
+  S.clean={keys,raw:S.fb.raw+S.ig.raw,dup:S.fb.dup+S.ig.dup,empty:S.fb.empty+S.ig.empty};S.hash=await listHash(keys);
+  $('.sF').textContent=S.fb.keys.length;$('.sI').textContent=S.ig.keys.length;$('.sDup').textContent=S.clean.dup;$('.sM').textContent=S.merges.length;$('.sVal').textContent=keys.length;
+  $('.cleaned').innerHTML=keys.map((k,i)=>`${i+1}. ${nameOf(k)}`).join('<br>')||'（空）';$('.hash').textContent=S.hash;$('.resultWrap').classList.add('hidden');}
+ if(P=='ALL'){
+  $('.pull').onclick=()=>{for(const Q of ['FB','IG']){const T=state[Q],tq=T.el.querySelector('.paste');const lines=readLines(T,s=>T.el.querySelector(s),tq);$(Q=='FB'?'.pfb':'.pig').value=lines.join('\n');}$('.clean').click();};
+  $('.sample').onclick=()=>{$('.pfb').value=SAMPLE_ALL.FB;$('.pig').value=SAMPLE_ALL.IG;$('.clean').click();$('.seed').value=SEED_SAMPLE;};
+  $('.clean').onclick=async()=>{S.fb=cleanList($('.pfb').value.split(/\r?\n/));S.ig=cleanList($('.pig').value.split(/\r?\n/));
+   const pairs=findSimilarPairs(S.fb.keys,S.ig.keys);
+   $('.simList').innerHTML=pairs.length?pairs.map(p=>`<div class="rk"><label><input type="checkbox" data-fb="${esc(p.fb)}" data-ig="${esc(p.ig)}"> 合併</label><span><span class="badge FB">FB</span> ${esc(S.fb.display[p.fb])}</span>↔<span><span class="badge IG">IG</span> ${esc(S.ig.display[p.ig])}</span><span class="hint">${p.exact?'名稱完全相同':'相似度 '+Math.round(p.ratio*100)+'%'}</span></div>`).join(''):'沒有發現疑似同一人的帳號';
+   el.querySelectorAll('.simList input').forEach(c=>c.onchange=async()=>{const conflict=[...el.querySelectorAll('.simList input:checked')].some(o=>o!==c&&(o.dataset.fb===c.dataset.fb||o.dataset.ig===c.dataset.ig));
+    if(c.checked&&conflict){c.checked=false;return alert('同一帳號只能合併一次');}await rebuild();});
+   await rebuild();};
+ }else{
+  $('.sample').onclick=()=>{S.csvRows=null;$('.paste').value=SAMPLE[P];$('.clean').click();$('.seed').value=SEED_SAMPLE;};
+  $('.clean').onclick=async()=>{const r=cleanList(readLines(S,$,$('.paste')));S.clean=r;S.hash=await listHash(r.keys);$('.sRaw').textContent=r.raw;$('.sDup').textContent=r.dup;$('.sEmp').textContent=r.empty;$('.sVal').textContent=r.keys.length;
+   $('.cleaned').innerHTML=r.keys.map((k,i)=>`${i+1}. ${esc(r.display[k])}`).join('<br>')||'（空）';$('.hash').textContent=S.hash;$('.resultWrap').classList.add('hidden');};
+ }
+ $('.copyHash').onclick=()=>{if(S.hash)navigator.clipboard.writeText(S.hash).then(()=>alert('已複製名單雜湊'));};
+ $('.mask').onchange=()=>S.res&&render();
+ const REASON={same:'同一人，取消',quit:'放棄'};
+ function render(){const m=$('.mask').checked,R=S.res,ap=applyReplacements(R.ranking,R.n,S.removals);S.ap=ap;
+  const filled=new Set(ap.replacements.map(x=>x.replaced_by_key)),gone=new Map(S.removals.map(x=>[x.key,x.reason]));
+  $('.winners').innerHTML=ap.winners.map((w,i)=>`<li><span class="no">${i+1}</span><span class="nm">${nameOf(w.key,m)}${filled.has(w.key)?' <span class="hint">（遞補，原第 '+w.rank+' 順位）</span>':''}</span><span class="sc mono">${w.score.slice(0,16)}…</span><span class="acts"><button data-k="${esc(w.key)}" data-r="same">同一人，取消</button><button data-k="${esc(w.key)}" data-r="quit">放棄</button></span></li>`).join('');
+  el.querySelectorAll('.acts button').forEach(b=>b.onclick=()=>{S.removals.push({key:b.dataset.k,reason:REASON[b.dataset.r]});render();});
+  $('.repl').innerHTML=ap.replacements.length?'<b>遞補紀錄：</b><br>'+ap.replacements.map(x=>`第 ${x.removed_rank} 順位 ${nameOf(x.removed_key,m)}（${esc(x.reason)}）→ 由第 ${x.replaced_by_rank??'—'} 順位 ${x.replaced_by_key?nameOf(x.replaced_by_key,m):'（無人可遞補）'} 遞補`).join('<br>')+' <button class="btn ghost undo" style="font-size:.75rem;padding:2px 8px">復原上一步</button>':'';
+  const u=$('.undo');if(u)u.onclick=()=>{S.removals.pop();render();};
+  const winK=new Set(ap.winners.map(w=>w.key)),show=Math.min(R.ranking.length,R.n+10+S.removals.length);
+  $('.ranking').innerHTML=R.ranking.slice(0,show).map(r=>`<div class="rk ${gone.has(r.key)?'out':winK.has(r.key)?'win':''}"><span class="mono">#${r.rank}</span><span style="flex:1">${nameOf(r.key,m)}</span><span class="mono hint">${r.score.slice(0,16)}…</span><span class="hint">${gone.has(r.key)?esc(gone.get(r.key)):winK.has(r.key)?'得獎':'候補'}</span></div>`).join('')+(show<R.ranking.length?`<div class="hint">……其餘 ${R.ranking.length-show} 名見下載紀錄</div>`:'');
+  $('.meta').innerHTML=`抽獎時間：${R.timestamp}<br>有效名單 ${R.valid_count} ${P=='ALL'?'筆':'人'}｜名單雜湊 <span class="mono">${R.list_hash_sha256.slice(0,16)}…</span><br>種子：${esc(R.seed)}`;}
+ $('.draw').onclick=async()=>{if(!S.clean||!S.clean.keys.length)return alert('請先整理名單');const seed=$('.seed').value;if(!seed.trim())return alert('請輸入公開種子');
+  const n=Math.max(1,parseInt($('.n').value)||(P=='ALL'?10:5));const ranking=await drawWinners(S.clean.keys,seed,P,S.clean.keys.length);
+  S.removals=[];S.res={timestamp:tw(),seed,n,ranking,valid_count:S.clean.keys.length,list_hash_sha256:S.hash};
+  $('.resultWrap').classList.remove('hidden');$('.plat').textContent=PNAME[P];$('.winners').innerHTML='';$('.ranking').innerHTML='';$('.repl').innerHTML='';const sh=$('.shuffle');const ks=S.clean.keys;
+  for(let t=0;t<18;t++){sh.innerHTML=nameOf(ks[(t*7919)%ks.length]);await new Promise(r=>setTimeout(r,60));}sh.textContent='';render();};
+ const rec=()=>{const R=S.res,ap=applyReplacements(R.ranking,R.n,S.removals),orig=R.ranking.slice(0,R.n);const W=w=>({rank:w.rank,account:plainName(w.key),key:w.key,score:w.score,...(P=='ALL'?{platform:splitEntry(w.key).map(e=>e.platform).join('+')}:{})});
+  const r={campaign:'盧琴樹 LUCHINSHU「猜猜我是誰」草莓夏威夷果牛軋糖',timestamp:R.timestamp,platform:P,raw_count:S.clean.raw,duplicates_removed:S.clean.dup,empty_skipped:S.clean.empty,valid_count:R.valid_count,list_hash_sha256:R.list_hash_sha256,seed:R.seed,winner_count:R.n,algorithm:ALGO+(P=='ALL'?ALGO_ALL:''),
+   ...(P=='ALL'?{fb_valid_count:S.fb.keys.length,ig_valid_count:S.ig.keys.length,manual_merges:S.merges.map(([f,i])=>'FB:'+f+'+IG:'+i),note:'同平台內去重；同名帳號跨平台各算一筆，除非人工合併'}:{}),
+   canonical_list:S.clean.keys,winners:ap.winners.map(W),original_winners:orig.map(W),
+   replacements:ap.replacements.map(x=>({removed_rank:x.removed_rank,removed_account:plainName(x.removed_key),removed_key:x.removed_key,reason:x.reason,replaced_by_rank:x.replaced_by_rank,replaced_by_account:x.replaced_by_key?plainName(x.replaced_by_key):null,replaced_by_key:x.replaced_by_key})),
+   full_ranking:R.ranking.slice(0,Math.min(R.ranking.length,R.n+10+S.removals.length)).map(W)};return r;};
+ $('.dlJson').onclick=()=>dl(`luchinshu_${P}_draw.json`,JSON.stringify(rec(),null,2),'application/json');
+ $('.dlCsv').onclick=()=>{const r=rec(),q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';let s=[['campaign',r.campaign],['timestamp',r.timestamp],['platform',r.platform],['raw_count',r.raw_count],['duplicates_removed',r.duplicates_removed],['valid_count',r.valid_count],['list_hash_sha256',r.list_hash_sha256],['seed',r.seed],['algorithm',r.algorithm],...(P=='ALL'?[['manual_merges',r.manual_merges.join(' ; ')],['note',r.note]]:[])].map(x=>x.map(q).join(',')).join('\n');
+  const L=a=>a.map(w=>[w.rank,w.account,w.key,w.score].map(q).join(',')).join('\n');
+  s+='\n\nfinal_winners\nrank,account,key,score\n'+L(r.winners)+'\n\nreplacements\nremoved_rank,removed_account,reason,replaced_by_rank,replaced_by_account\n'+r.replacements.map(x=>[x.removed_rank,x.removed_account,x.reason,x.replaced_by_rank,x.replaced_by_account].map(q).join(',')).join('\n')+'\n\nfull_ranking\nrank,account,key,score\n'+L(r.full_ranking)+'\n\ncanonical_list\n'+r.canonical_list.map(q).join('\n');dl(`luchinshu_${P}_draw.csv`,s,'text/csv');};
+ $('.dlTxt').onclick=()=>{const r=rec();dl(`luchinshu_${P}_draw.txt`,`${r.campaign}\n時間：${r.timestamp}\n平台：${r.platform}\n原始 ${r.raw_count}／重複 ${r.duplicates_removed}／有效 ${r.valid_count}\n名單雜湊：${r.list_hash_sha256}\n種子：${r.seed}\n演算法：${r.algorithm}\n${P=='ALL'?`說明：${r.note}\n人工合併：${r.manual_merges.join('、')||'無'}\n`:''}\n得獎者：\n${r.winners.map((w,i)=>`${i+1}. ${w.account}  (原第 ${w.rank} 順位) ${w.score}`).join('\n')}\n\n遞補紀錄：\n${r.replacements.map(x=>`第 ${x.removed_rank} 順位 ${x.removed_account}（${x.reason}）→ 第 ${x.replaced_by_rank} 順位 ${x.replaced_by_account}`).join('\n')||'無'}\n\n完整排名：\n${r.full_ranking.map(w=>`#${w.rank} ${w.account}  ${w.score}`).join('\n')}\n\n標準名單：\n${r.canonical_list.join('\n')}\n`,'text/plain');};
+}
+const ALGO_ALL='；合併抽：platform = ALL，key = 「FB:」或「IG:」+ 正規化帳號（同平台內去重，跨平台同名各算一筆；人工合併者為「FB:x+IG:y」）';
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x==b));for(const P in state)state[P].el.classList.toggle('hidden',P!=b.dataset.p);});
+document.getElementById('vBtn').onclick=()=>{const P=document.querySelector('.tabs .on').dataset.p,h=state[P].hash,v=document.getElementById('vHash').value.trim().toLowerCase();document.getElementById('vOut').textContent=!h?'請先整理名單':v===h?'✅ 一致：名單未被更動':'❌ 不一致';};
+function demo(P,after){document.querySelector(`.tabs button[data-p="${P}"]`).click();const p=state[P].el;p.querySelector('.sample').click();
+ setTimeout(async()=>{if(after)await after(p);p.querySelector('.draw').click();},400);
+ setTimeout(()=>{p.querySelectorAll('.card:not(.resultWrap)').forEach(c=>c.style.display='none');document.querySelector('.tabs').style.display='none';
+  if(P=='ALL'){const b=p.querySelector('.acts button[data-r="quit"]');b&&b.click();}},2800);}
+if(location.hash=='#demo')demo('FB');
+if(location.hash=='#demo-all')demo('ALL',async p=>{const c=p.querySelector('.simList input');if(c){c.checked=true;await c.onchange();}});
+</script></body></html>
